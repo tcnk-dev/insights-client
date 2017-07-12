@@ -8,9 +8,13 @@ class ActionModule(ActionBase):
         results = super(ActionModule, self).run(tmp, task_vars)
         remote_user = task_vars.get('ansible_ssh_user') or self._play_context.remote_user
 
+        import pkgutil
+        package = pkgutil.get_loader('insights_core')
+        location_to_the_egg = package.archive
+
         # copy our egg
         tmp = self._make_tmp_path(remote_user)
-        source_full = self._loader.get_real_file("/usr/lib/python2.7/site-packages/insights-core.egg")
+        source_full = self._loader.get_real_file(location_to_the_egg)
         tmp_src = self._connection._shell.join_path(tmp, 'insights')
         remote_path = self._transfer_file(source_full, tmp_src)
         results = merge_hash(results, self._execute_module(module_args={"egg_path": remote_path}, module_name="insights", tmp=tmp, task_vars=task_vars))

@@ -28,22 +28,19 @@ class InsightsAnsible(object):
             return False
 
     def get_egg_path(self):
-        return '/usr/lib/python2.7/site-packages/insights-core.egg'
+        import pkgutil
+        package = pkgutil.get_loader('insights_core')
+        location_to_the_egg = package.archive
+        return location_to_the_egg
 
     def run(self):
         try:
             inventory = self.inventory if self.inventory is not None else constants.default_ansible_inventory
             egg_path = self.egg_path if self.egg_path is not None else self.get_egg_path()
-            ansible_command = 'ansible %s -m insights' % (inventory)
-            print "Running command %s" % (ansible_command)
+            ansible_command = constants.ansible_command % (inventory)
             env = os.environ.copy()
-            env['ANSIBLE_LIBRARY'] = "/etc/insights-client/insights/"
-            env['ANSIBLE_ACTION_PLUGINS'] = '/etc/insights-client/insights/action_plugins/'
+            env['ANSIBLE_LIBRARY'] = constants.ansible_library_path
+            env['ANSIBLE_ACTION_PLUGINS'] = constants.ansible_action_plugins_path
             ansible_execution = self.utilities.run_command_get_output(ansible_command, env)
-            print "Ansible execution Status:"
-            print ansible_execution['status']
-            print "Ansible execution Output:"
-            print ansible_execution['output']
         except Exception as an_exception:
-            print an_exception
             sys.exit("Could not run the Ansible action plugin and module. Exiting.")
