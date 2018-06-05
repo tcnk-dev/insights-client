@@ -5,7 +5,7 @@ SRPM=$(RPMTOP)/SRPMS/$(PKGNAME)-*.src.rpm
 TARBALL=$(RPMTOP)/$(PKGNAME)-*.tar.gz
 RPM=$(RPMTOP)/RPMS/noarch/$(PKGNAME)*.rpm
 OS_MAJOR_VER=$(shell python insights_client/major_version.py)
-PY_SDIST=python setup.py sdist
+PY_SDIST=python3 setup.py sdist
 
 
 all: rpm

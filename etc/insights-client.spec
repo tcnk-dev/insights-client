@@ -1,10 +1,9 @@
-%{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 %define _binaries_in_noarch_packages_terminate_build 0
 
 Name:                   insights-client
 Summary:                Uploads Insights information to Red Hat on a periodic basis
-Version:                3.0.3
-Release:                2%{?dist}
+Version:                3.0.4
+Release:                0%{?dist}
 Source0:                https://github.com/redhatinsights/insights-client/archive/insights-client-%{version}.tar.gz
 Epoch:                  0
 License:                GPLv2+
@@ -18,8 +17,9 @@ Provides: redhat-access-insights = %{version}-%{release}%{?dist}
 Obsoletes: redhat-access-insights <= 1.0.13-2%{?dist}
 Obsoletes: redhat-access-proactive <= 0.3.3-0%{?dist}
 
-Requires: python
-Requires: python-setuptools
+# TODO: make specfile dynamic for python 2 or 3
+Requires: python3
+Requires: python3-setuptools
 Requires: python-requests >= 2.6
 Requires: PyYAML
 Requires: pyOpenSSL
@@ -37,8 +37,8 @@ Requires: systemd
 %endif
 BuildArch: noarch
 
-BuildRequires: python2-devel
-BuildRequires: python-setuptools
+BuildRequires: python3-devel
+BuildRequires: python3-setuptools
 %if 0%{?rhel} != 6
 BuildRequires: systemd
 %endif
@@ -51,7 +51,7 @@ Sends insightful information to Red Hat for automated analysis
 
 %install
 rm -rf ${RPM_BUILD_ROOT}
-%{__python} setup.py install --root=${RPM_BUILD_ROOT} $PREFIX
+%{__python3} setup.py install --root=${RPM_BUILD_ROOT} $PREFIX
 
 %post
 
@@ -195,9 +195,10 @@ test "x$RPM_BUILD_ROOT" != "x" && rm -rf $RPM_BUILD_ROOT
 %attr(644,root,root) /etc/insights-client/rpm.egg
 %attr(644,root,root) /etc/insights-client/rpm.egg.asc
 
-%attr(755,root,root) %dir %{python_sitelib}/insights_client*.egg-info
-%attr(644,root,root) %{python_sitelib}/insights_client*.egg-info/*
-%attr(644,root,root) %{python_sitelib}/insights_client/*.py*
+%attr(755,root,root) %dir %{python3_sitelib}/insights_client*.egg-info
+%attr(644,root,root) %{python3_sitelib}/insights_client*.egg-info/*
+%attr(644,root,root) %{python3_sitelib}/insights_client/*.py*
+%attr(644,root,root) %{python3_sitelib}/insights_client/__pycache__/*
 
 %doc
 %defattr(-, root, root)
@@ -205,6 +206,9 @@ test "x$RPM_BUILD_ROOT" != "x" && rm -rf $RPM_BUILD_ROOT
 /usr/share/man/man5/*.5.gz
 
 %changelog
+* Tue Jun 5 2018 Jeremy Crafts <jcrafts@redhat.com> - 3.0.4-0
+- Initial RHEL 8 build
+
 * Thu Jan 18 2018 Kyle Lape <klape@redhat.com> - 3.0.3-1
 - RHEL 7 RPM now uses systemd service and timer instead of cron
 - Addition of IO and CPU cgroup constraints
