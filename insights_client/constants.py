@@ -5,4 +5,4 @@ Constants
 
 class InsightsConstants(object):
     app_name = 'insights-client'
-    version = '3.0.4-0'
+    version = '3.0.4-2'
