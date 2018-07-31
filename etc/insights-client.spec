@@ -3,7 +3,7 @@
 Name:                   insights-client
 Summary:                Uploads Insights information to Red Hat on a periodic basis
 Version:                3.0.4
-Release:                0%{?dist}
+Release:                2%{?dist}
 Source0:                https://github.com/redhatinsights/insights-client/archive/insights-client-%{version}.tar.gz
 Epoch:                  0
 License:                GPLv2+
@@ -20,15 +20,15 @@ Obsoletes: redhat-access-proactive <= 0.3.3-0%{?dist}
 # TODO: make specfile dynamic for python 2 or 3
 Requires: python3
 Requires: python3-setuptools
-Requires: python-requests >= 2.6
-Requires: PyYAML
-Requires: pyOpenSSL
+Requires: python3-requests >= 2.6
+Requires: python3-PyYAML
+Requires: python3-pyOpenSSL
 Requires: libcgroup
 Requires: tar
 Requires: gpg
 Requires: pciutils
-Requires: python-magic
-Requires: python-six
+Requires: python3-magic
+Requires: python3-six
 %if 0%{?rhel} && 0%{?rhel} == 6
 Requires: python-argparse
 %else
@@ -52,6 +52,9 @@ Sends insightful information to Red Hat for automated analysis
 %install
 rm -rf ${RPM_BUILD_ROOT}
 %{__python3} setup.py install --root=${RPM_BUILD_ROOT} $PREFIX
+#pathfix.py -pni "%{__python3}" %{buildroot}%{_sbindir}/insights_client
+sed -i '1s=^#!/usr/bin/env python\($\|\s\)=#!%{__python3}\1=' \
+    %{buildroot}%{python3_sitelib}/insights_client/{__init__.py,major_version.py,run.py}
 
 %post
 
