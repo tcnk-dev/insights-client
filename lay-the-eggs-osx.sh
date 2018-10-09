@@ -2,9 +2,12 @@ rm etc/rpm.egg
 rm etc/rpm.egg.asc
 
 CWD=$(pwd)
+DO_INSTALL=false
 
 if [[ -f "/etc/insights-client/rpm.egg" ]]; then
   rm /etc/insights-client/rpm.egg
+else
+  DO_INSTALL=true
 fi
 
 if [[ -z $1 ]]; then
@@ -24,5 +27,15 @@ else
 fi
 
 ./build_client_egg.sh
-mv insights.zip /etc/insights-client/rpm.egg
+
+if [[ $DO_INSTALL = true ]]; then
+  mv insights.zip $CWD/etc/rpm.egg
+  cd $CWD
+  touch etc/rpm.egg.asc
+  make clean
+  python setup.py install
+else
+  mv insights.zip /etc/insights-client/rpm.egg
+  cd $CWD
+fi
 exit
