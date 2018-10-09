@@ -1,7 +1,10 @@
 #!/usr/bin/env python
+import os
 
 
 def major_version():
+    if not os.path.exists("/etc/redhat-release"):
+        return -1
     with open("/etc/redhat-release") as fp:
         r = fp.read().strip()
 
