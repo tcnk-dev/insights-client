@@ -2,7 +2,7 @@
 
 Name:                   insights-client
 Summary:                Uploads Insights information to Red Hat on a periodic basis
-Version:                3.0.4
+Version:                3.0.5
 Release:                2%{?dist}
 Source0:                https://github.com/redhatinsights/insights-client/archive/insights-client-%{version}.tar.gz
 Epoch:                  0
@@ -18,12 +18,11 @@ Obsoletes: redhat-access-insights <= 1.0.13-2%{?dist}
 Obsoletes: redhat-access-proactive <= 0.3.3-0%{?dist}
 
 # TODO: make specfile dynamic for python 2 or 3
-Requires: python3
+%{?__python3:Requires: %{__python3}}
 Requires: python3-setuptools
 Requires: python3-requests >= 2.6
 Requires: python3-PyYAML
 Requires: python3-pyOpenSSL
-Requires: libcgroup
 Requires: tar
 Requires: gpg
 Requires: pciutils
@@ -52,7 +51,6 @@ Sends insightful information to Red Hat for automated analysis
 %install
 rm -rf ${RPM_BUILD_ROOT}
 %{__python3} setup.py install --root=${RPM_BUILD_ROOT} $PREFIX
-#pathfix.py -pni "%{__python3}" %{buildroot}%{_sbindir}/insights_client
 sed -i '1s=^#!/usr/bin/env python\($\|\s\)=#!%{__python3}\1=' \
     %{buildroot}%{python3_sitelib}/insights_client/{__init__.py,major_version.py,run.py}
 
@@ -209,6 +207,18 @@ test "x$RPM_BUILD_ROOT" != "x" && rm -rf $RPM_BUILD_ROOT
 /usr/share/man/man5/*.5.gz
 
 %changelog
+* Thu Sep 20 2018 Tomas Orsava <torsava@redhat.com> - 3.0.5-2
+- Require the Python interpreter directly instead of using the package name
+- Related: rhbz#1619153
+
+* Wed Aug 8 2018 Jeremy Crafts <jcrafts@redhat.com> - 3.0.5-1
+- Python 3 compatibility fixes
+- Remove libcgroup dependency
+- Resolves: BZ1510990
+
+* Tue Aug 7 2018 Jeremy Crafts <jcrafts@redhat.com> - 3.0.5-0
+- RHEL 8 build with bugfixes
+
 * Tue Jun 5 2018 Jeremy Crafts <jcrafts@redhat.com> - 3.0.4-0
 - Initial RHEL 8 build
 
