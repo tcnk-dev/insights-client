@@ -39,51 +39,6 @@ def gpg_validate(path):
     return proc.returncode == 0
 
 
-def run_phase(phase, client):
-    """
-    Call the run script for the given phase.  If the phase succeeds returns the
-    index of the egg that succeeded to be used in the next phase.
-    """
-    insights_command = ["insights-client-run"] + sys.argv[1:]
-    config = client.get_conf()
-    debug = config["debug"]
-    for i, egg in enumerate(EGGS):
-        if egg is None or not os.path.isfile(egg):
-            if debug:
-                log("Egg does not exist: %s" % egg)
-            continue
-        if config['gpg'] and not client.verify(egg)['gpg']:
-            log("WARNING: GPG verification failed.  Not loading egg: %s" % egg)
-            continue
-        if debug:
-            log("Attempting %s with egg: %s" % (phase['name'], egg))
-
-        # setup the env
-        insights_env = {
-            "INSIGHTS_PHASE": str(phase['name']),
-            "PYTHONPATH": str(egg)
-        }
-        env = os.environ
-        env.update(insights_env)
-
-        process = subprocess.Popen(insights_command,
-                                   env=env)
-        stdout, stderr = process.communicate()
-        if process.returncode == 0:
-            # phase successful, don't try another egg
-            return
-        if process.returncode == 1:
-            # egg hit an error, try the next
-            logger.debug('Attempt failed.')
-        if process.returncode >= 100:
-            # 100 and 101 are unrecoverable, like post-unregistration, or
-            #   a machine not being registered yet, or simply a 'dump & die'
-            #   CLI option
-            sys.exit(process.returncode % 100)
-    # All attemps to run phase have failed
-    sys.exit(1)
-
-
 def _main():
     """
     attempt to update with current, fallback to rpm
@@ -100,35 +55,45 @@ def _main():
 
     sys.path = validated_eggs + sys.path
 
-    try:
-        # flake8 complains because these imports aren't at the top
-        import insights
-        from insights.client import InsightsClient
-        from insights.client.phase.v1 import get_phases
+    # new
+    import insights
+    from insights.client import InsightsClient
+    from insights.client.config import InsightsConfig
+    config = InsightsConfig().load_all()
+    client = InsightsClient(config=config)
+    client._main()
 
-        # handle client instantation here so that it isn't done multiple times in __init__
-        client = InsightsClient(True, False)  # read config, but dont setup logging
-        config = client.get_conf()
+    return
+    # old
+    # try:
+    #     # flake8 complains because these imports aren't at the top
+    #     import insights
+    #     from insights.client import InsightsClient
+    #     from insights.client.phase.v1 import get_phases
 
-        # handle log rotation here instead of core
-        if os.path.isfile(config['logging_file']):
-            log_handler = logging.handlers.RotatingFileHandler(
-                config['logging_file'], backupCount=3)
-            log_handler.doRollover()
-        # we now have access to the clients logging mechanism instead of using print
-        client.set_up_logging()
-        logging.root.debug("Loaded initial egg: %s", os.path.dirname(insights.__file__))
+    #     # handle client instantation here so that it isn't done multiple times in __init__
+    #     client = InsightsClient(True, False)  # read config, but dont setup logging
+    #     config = client.get_conf()
 
-        if config["version"]:
-            from insights_client.constants import InsightsConstants as constants
-            print("Client: %s" % constants.version)
-            print("Core: %s" % client.version())
-            return
+    #     # handle log rotation here instead of core
+    #     if os.path.isfile(config['logging_file']):
+    #         log_handler = logging.handlers.RotatingFileHandler(
+    #             config['logging_file'], backupCount=3)
+    #         log_handler.doRollover()
+    #     # we now have access to the clients logging mechanism instead of using print
+    #     client.set_up_logging()
+    #     logging.root.debug("Loaded initial egg: %s", os.path.dirname(insights.__file__))
 
-        for p in get_phases():
-            run_phase(p, client)
-    except KeyboardInterrupt:
-        sys.exit('Aborting.')
+    #     if config["version"]:
+    #         from insights_client.constants import InsightsConstants as constants
+    #         print("Client: %s" % constants.version)
+    #         print("Core: %s" % client.version())
+    #         return
+
+    #     for p in get_phases():
+    #         run_phase(p, client)
+    # except KeyboardInterrupt:
+    #     sys.exit('Aborting.')
 
 
 if __name__ == '__main__':
