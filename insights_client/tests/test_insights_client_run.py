@@ -5,7 +5,7 @@ from subprocess import PIPE
 
 def run_insights_client_run():
     '''
-    Run the run.py script
+    Run the run.py script and test that it errors out.
     '''
     output = subprocess.Popen(['python', '../run.py'], stdin=PIPE, stdout=PIPE, stderr=PIPE)
     (stdout, stderr) = output.communicate()
