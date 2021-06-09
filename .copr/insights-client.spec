@@ -68,6 +68,7 @@ fi
 
 %systemd_post insights-register.path
 %systemd_post insights-unregister.path
+%systemd_post 80-insights.preset
 
 
 %preun
@@ -109,6 +110,7 @@ rm -rf %{buildroot}
 %{_sysconfdir}/insights-client/rpm.egg*
 %{_bindir}/*
 %{_unitdir}/*
+%{_presetdir}/*
 %attr(444,root,root) %{_sysconfdir}/insights-client/*.pem
 %attr(444,root,root) %{_sysconfdir}/insights-client/redhattools.pub.gpg
 %{python3_sitelib}/insights_client/
