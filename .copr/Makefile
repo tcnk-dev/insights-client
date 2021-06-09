@@ -1,4 +1,5 @@
 srpm:
+	dnf install -y automake autoconf
 	./autogen.sh
 	make dist
 	rpmbuild -bs $(spec) --define '_topdir .copr' --define '_sourcedir .'
