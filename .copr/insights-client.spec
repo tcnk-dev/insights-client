@@ -47,7 +47,9 @@ BuildRequires: python3-devel
 %else
 BuildRequires: python-devel
 %endif
+%if 0%{?rhel} != 6
 BuildRequires: systemd
+%endif
 BuildRequires: pam
 
 
