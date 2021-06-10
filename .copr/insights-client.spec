@@ -24,15 +24,27 @@ Requires: pciutils
 
 %{?__python3:Requires: %{__python3}}
 %{?systemd_requires}
+%if 0%{?rhel} >= 8
 Requires: python3-requests >= 2.6
 Requires: python3-PyYAML
 Requires: python3-magic
 Requires: python3-six
-Requires: platform-python-setuptools
+Requires: python3dist(setuptools)
+%else
+Requires: python-requests >= 2.6
+Requires: python-PyYAML
+Requires: python-magic
+Requires: python-six
+Requires: python-setuptools
+%endif
 Requires: coreutils
 BuildRequires: wget
 BuildRequires: binutils
+%if 0%{?rhel} >= 8
 BuildRequires: python3-devel
+%else
+BuildRequires: python-devel
+%endif
 BuildRequires: systemd
 BuildRequires: pam
 
@@ -51,8 +63,9 @@ Sends insightful information to Red Hat for automated analysis
 
 %install
 %{make_install}
+%if 0%{?rhel} != 6
 %{__install} -D -m 644 %{_builddir}/%{name}-%{version}/data/insights-client.motd %{buildroot}/%{_sysconfdir}/insights-client/insights-client.motd
-
+%endif
 
 %post
 %systemd_post %{name}.timer
@@ -110,12 +123,17 @@ rm -rf %{buildroot}
 %{_sysconfdir}/insights-client/rpm.egg*
 %{_bindir}/*
 %{_unitdir}/*
+if 0%{?rhel} != 6
 %{_presetdir}/*
+%endif
 %attr(444,root,root) %{_sysconfdir}/insights-client/*.pem
 %attr(444,root,root) %{_sysconfdir}/insights-client/redhattools.pub.gpg
-%{python3_sitelib}/insights_client/
 %{_defaultdocdir}/%{name}
-
+%if 0%{?rhel} >= 8
+%{python3_sitelib}/insights_client/
+%else
+%{python_sitelib}/insights_client/
+%endif
 
 %doc
 %defattr(-, root, root)
