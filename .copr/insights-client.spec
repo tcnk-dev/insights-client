@@ -23,7 +23,9 @@ Requires: gpg
 Requires: pciutils
 
 %{?__python3:Requires: %{__python3}}
+%if 0%{?rhel} != 6
 %{?systemd_requires}
+%endif
 %if 0%{?rhel} >= 8
 Requires: python3-requests >= 2.6
 Requires: python3-PyYAML
