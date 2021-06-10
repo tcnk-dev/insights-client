@@ -123,7 +123,7 @@ rm -rf %{buildroot}
 %{_sysconfdir}/insights-client/rpm.egg*
 %{_bindir}/*
 %{_unitdir}/*
-if 0%{?rhel} != 6
+%if 0%{?rhel} != 6
 %{_presetdir}/*
 %endif
 %attr(444,root,root) %{_sysconfdir}/insights-client/*.pem
