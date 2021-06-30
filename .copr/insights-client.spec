@@ -2,7 +2,7 @@
 
 Name:                   insights-client
 Summary:                Uploads Insights information to Red Hat on a periodic basis
-Version:                3.1.5
+Version:                %{insights_client_version}
 Release:                0.1%{?dist}
 Source:                 insights-client-%{version}.tar.gz
 Epoch:                  0
