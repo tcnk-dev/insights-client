@@ -7,5 +7,6 @@ srpm:
 	./autogen.sh
 	echo $(CUR_VERSION) > VERSION
 	make dist
-	rpmbuild -bs $(spec) --define '_topdir .copr' --define '_sourcedir .' --define 'insights_client_version $(NEXT_VERSION)'
+	sed -e "s/@PACKAGE_VERSION@/$(NEXT_VERSION)/g" $(spec).in > $(spec)
+	rpmbuild -bs $(spec) --define '_topdir .copr' --define '_sourcedir .'
 	mv .copr/SRPMS/insights-client-*.src.rpm $(outdir)
