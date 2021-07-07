@@ -1,6 +1,6 @@
 CUR_VERSION := $(shell cat VERSION)
 NEXT_VERSION := $(shell echo $(CUR_VERSION) | awk -F. '{printf("%d.%d.%d", $$1, $$2, $$3+1)}')
-COMMIT_HASH := $(shell git --no-pager log --pretty=tformat:"%h" -n 1)
+COMMIT_HASH := $(shell cat .git/HEAD | awk '{print ".git/"$$2}' | xargs cat | cut -c -7)
 
 srpm:
 	dnf install -y automake autoconf wget
