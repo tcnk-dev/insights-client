@@ -3,6 +3,10 @@
 ## Prerequisites
 All the stuff you need to get started. This guide assumes you're using a RHEL 8 or Fedora workstation.
 
+### Red Hat Kerberos Auth
+
+Refer to **Kerberos Setup** in [this document](https://source.redhat.com/groups/public/segteam/segteam_wiki/building_from_git_using_rhpkg) to set up Kerberos auth in your terminal.
+
 ### Required Packages
 You will need these packages installed, which should be available in your base repos.
 ```
@@ -22,10 +26,6 @@ sudo dnf install -y rhpkg brewkoji
 sudo wget -P /etc/yum.repos.d/ http://download.devel.redhat.com/rel-eng/RCMTOOLS/rcm-tools-fedora.repo
 sudo dnf install -y rhpkg brewkoji
 ```
-
-### Red Hat Kerberos Auth
-
-Refer to [blah]
 
 ## 1. Creating Source Tarball Release
 To create the insights-client source tarball, clone the repository and run the following command:
