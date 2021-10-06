@@ -6,7 +6,7 @@ validate-commits:
   script:
     - apk add curl
     - curl https://password.corp.redhat.com/RH-IT-Root-CA.crt -o /etc/ssl/certs/RH-IT-Root-CA.pem
-    - curl https://password.corp.redhat.com/legacy.crt -o /etc/ssl/certs/legacy.pem
+    - curl https://password.corp.redhat.com/ipa.crt -o /etc/ssl/certs/ipa.pem
     - update-ca-certificates -f
     - git fetch origin master
     - commitsar
