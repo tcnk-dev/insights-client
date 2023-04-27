@@ -141,6 +141,7 @@ rm -rf %{buildroot}
 %{_defaultdocdir}/%{name}
 %if 0%{?rhel} >= 8
 %{python3_sitelib}/insights_client/
+%{_sysconfdir}/logrotate.d/insights-client
 %else
 %{python_sitelib}/insights_client/
 %endif
