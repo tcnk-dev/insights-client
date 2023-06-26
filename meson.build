@@ -26,8 +26,12 @@ config_data = configuration_data({
   'SYSCONFDIR': '/' / get_option('sysconfdir'),
   'sysconfdir': '/' / get_option('sysconfdir'),
   'top_srcdir': meson.project_source_root(),
-  'install_mode': 'rwxr-xr-x'
 })
+
+install_data('insights-client',
+  install_dir : get_option('bindir'),
+  install_mode: 'rwxr-xr-x'
+)
 
 subdir('data')
 subdir('docs')
